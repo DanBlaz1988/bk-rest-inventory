@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>BK Rest Inventory</title>
+<style>
+body {
+  font-family: Arial, sans-serif;
+  background:#f5f5f5;
+  padding:20px;
+}
+h1 {
+  margin-bottom:10px;
+}
+table {
+  width:100%;
+  border-collapse: collapse;
+  background:white;
+}
+th, td {
+  border:1px solid #ccc;
+  padding:6px;
+  text-align:center;
+}
+th {
+  background:#222;
+  color:white;
+}
+input {
+  width:80px;
+  text-align:center;
+}
+.total {
+  background:#d4f7d4;
+  font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<h1>BK Rest Inventory</h1>
+<p>Karton + Beutel + Stück → Gesamt</p>
+
+<table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Karton size</th>
+<th>Karton qty</th>
+<th>Beutel size</th>
+<th>Beutel qty</th>
+<th>Stück</th>
+<th>Gesamt</th>
+</tr>
+</thead>
+<tbody id="rows"></tbody>
+</table>
+
+<script>
+const items = [
+  {name:"Whopper Bun", karton:20, beutel:30},
+  {name:"Burger Bun", karton:60, beutel:48},
+  {name:"Long Bun", karton:48, beutel:32},
+  {name:"Whopper Patty", karton:132, beutel:50},
+  {name:"Crispy Chicken Patty", karton:136, beutel:17},
+  {name:"Burger Patty", karton:312, beutel:65},
+  {name:"King Nuggets", karton:568, beutel:71},
+  {name:"Tomaten (kg)", karton:5, beutel:5},
+  {name:"Zwiebeln (kg)", karton:20, beutel:20},
+  {name:"Eisbergsalat (kg)", karton:6, beutel:6}
+];
+
+const tbody = document.getElementById("rows");
+
+items.forEach((i, idx) => {
+  tbody.innerHTML += `
+  <tr>
+    <td>${i.name}</td>
+    <td>${i.karton}</td>
+    <td><input type="number" id="kq${idx}" value="0" oninput="calc(${idx})"></td>
+    <td>${i.beutel}</td>
+    <td><input type="number" id="bq${idx}" value="0" oninput="calc(${idx})"></td>
+    <td><input type="number" id="s${idx}" value="0" oninput="calc(${idx})"></td>
+    <td class="total" id="t${idx}">0</td>
+  </tr>
+  `;
+});
+
+function calc(i){
+  const kq = +document.getElementById("kq"+i).value;
+  const bq = +document.getElementById("bq"+i).value;
+  const s  = +document.getElementById("s"+i).value;
+
+  const total =
+    kq * items[i].karton +
+    bq * items[i].beutel +
+    s;
+
+  document.getElementById("t"+i).innerText = total;
+}
+</script>
+
+</body>
+</html>
