@@ -1,178 +1,290 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>BK Rest Inventory</title>
   <style>
-    :root { --bg:#0b0f17; --card:#101826; --line:#1f2a3a; --text:#e8eefc; --muted:#9fb0d0; --green:#bff5c8; }
-    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial; background: var(--bg); color: var(--text); }
-    .wrap { max-width: 980px; margin: 24px auto; padding: 0 14px; }
-    h1 { font-size: 22px; margin: 0 0 6px; }
-    .sub { color: var(--muted); margin: 0 0 14px; font-size: 13px; }
-    .card { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px; overflow:auto; }
-    table { width: 100%; border-collapse: collapse; min-width: 920px; }
-    th, td { border-bottom: 1px solid var(--line); padding: 10px 8px; font-size: 13px; }
-    th { color: var(--muted); font-weight: 600; text-align: left; white-space: nowrap; }
-    td { vertical-align: middle; }
-    .mono { font-variant-numeric: tabular-nums; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
-    input { width: 88px; padding: 7px 8px; border-radius: 10px; border: 1px solid var(--line); background: #0c1421; color: var(--text); outline: none; }
-    input:focus { border-color: #3a4a67; }
-    .total { background: #0e1b15; border: 1px solid #264a37; color: var(--green); padding: 7px 8px; border-radius: 10px; display: inline-block; min-width: 92px; text-align: right; }
-    .small { font-size: 12px; color: var(--muted); }
-    .btnrow { display:flex; gap:10px; flex-wrap:wrap; margin-top: 12px; }
-    button { padding: 9px 12px; border-radius: 12px; border: 1px solid var(--line); background:#0c1421; color: var(--text); cursor:pointer; }
-    button:hover { border-color:#3a4a67; }
+    :root{
+      --bg:#0b1220;
+      --card:#0f1a2e;
+      --card2:#0c1526;
+      --text:#e7eefc;
+      --muted:#9bb0d0;
+      --line:rgba(255,255,255,.08);
+      --accent:#5eead4;
+      --ok:#16a34a;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 70% -10%, rgba(94,234,212,.12), transparent 60%),
+                  radial-gradient(900px 500px at 10% 0%, rgba(99,102,241,.10), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+    }
+    .wrap{max-width:1100px;margin:0 auto;padding:18px}
+    h1{margin:6px 0 4px;font-size:28px;letter-spacing:.3px}
+    .sub{margin:0 0 14px;color:var(--muted)}
+    .toolbar{
+      display:flex;gap:10px;flex-wrap:wrap;align-items:center;
+      background:rgba(255,255,255,.04);
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:10px 12px;
+      margin-bottom:14px;
+    }
+    .toolbar input{
+      flex:1;
+      min-width:220px;
+      background:rgba(0,0,0,.25);
+      border:1px solid var(--line);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      outline:none;
+    }
+    .btn{
+      background:rgba(94,234,212,.12);
+      border:1px solid rgba(94,234,212,.25);
+      color:var(--text);
+      border-radius:12px;
+      padding:10px 12px;
+      cursor:pointer;
+      user-select:none;
+    }
+    .btn:active{transform:translateY(1px)}
+    .grid{
+      background:rgba(255,255,255,.03);
+      border:1px solid var(--line);
+      border-radius:16px;
+      overflow:hidden;
+    }
+    table{width:100%;border-collapse:separate;border-spacing:0}
+    thead th{
+      text-align:left;
+      font-weight:600;
+      color:var(--muted);
+      font-size:12px;
+      letter-spacing:.4px;
+      padding:12px 10px;
+      background:rgba(255,255,255,.04);
+      border-bottom:1px solid var(--line);
+      position:sticky;top:0;backdrop-filter: blur(6px);
+      z-index:2;
+    }
+    tbody td{
+      padding:10px;
+      border-bottom:1px solid var(--line);
+      vertical-align:middle;
+    }
+    tbody tr:nth-child(odd){background:rgba(255,255,255,.015)}
+    .nr{width:70px;color:var(--muted)}
+    .sizes{color:var(--muted);font-variant-numeric:tabular-nums}
+    .qty input{
+      width:90px;
+      background:rgba(0,0,0,.25);
+      border:1px solid var(--line);
+      color:var(--text);
+      border-radius:10px;
+      padding:8px 10px;
+      outline:none;
+      font-variant-numeric:tabular-nums;
+    }
+    .qty input:focus{border-color:rgba(94,234,212,.35)}
+    .gesamt{
+      width:120px;
+      text-align:right;
+      font-variant-numeric:tabular-nums;
+      font-weight:700;
+      color:#d8ffe9;
+      background:rgba(22,163,74,.10);
+      border-left:1px solid var(--line);
+    }
+    .right{text-align:right}
+    .muted{color:var(--muted)}
+    .foot{
+      display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between;
+      margin-top:12px;color:var(--muted);font-size:12px;
+    }
   </style>
 </head>
 <body>
   <div class="wrap">
     <h1>BK Rest Inventory</h1>
-    <p class="sub">Karton + Beutel + Stück → Gesamt (daily inventory). No bread/salad ordering here.</p>
+    <p class="sub">Daily inventory: <span class="muted">Karton + Beutel + Stück → Gesamt</span></p>
 
-    <div class="card">
+    <div class="toolbar">
+      <input id="search" placeholder="Search item (e.g. Nuggets, Tomaten, Brioche)..." />
+      <button class="btn" id="clear">Clear all</button>
+      <button class="btn" id="reset">Reset to 0</button>
+    </div>
+
+    <div class="grid">
       <table>
         <thead>
           <tr>
-            <th>Nr.</th>
+            <th class="nr">Nr.</th>
             <th>Item</th>
-            <th class="mono">Karton size</th>
-            <th>Karton qty</th>
-            <th class="mono">Beutel size</th>
-            <th>Beutel qty</th>
-            <th class="mono">Stück size</th>
-            <th>Stück qty</th>
-            <th>Gesamt</th>
+            <th class="right">Karton size</th>
+            <th class="right">Karton qty</th>
+            <th class="right">Beutel size</th>
+            <th class="right">Beutel qty</th>
+            <th class="right">Stück</th>
+            <th class="right">Gesamt</th>
           </tr>
         </thead>
-        <tbody id="inventoryBody"></tbody>
+        <tbody id="rows"></tbody>
       </table>
+    </div>
 
-      <div class="btnrow">
-        <button id="btnReset">Reset all to 0</button>
-        <button id="btnFillDemo">Fill demo numbers</button>
-        <span class="small">Tip: you can type decimals (e.g. 1.5) for Beutel qty on Zwiebeln.</span>
-      </div>
+    <div class="foot">
+      <div>Tip: quantities are remembered in your browser (local storage).</div>
+      <div id="count"></div>
     </div>
   </div>
 
-  <script>
-    // FULL LIST from your "Tägliche Inventur" sheet (07.02.2026)
-    // Note: Bacon has Stück size 52x on the sheet. Others are 1 unless you tell me otherwise.
-    const items = [
-      { nr: 10, name: "Whopper BUN", cartonSize: 20, beutelSize: 30, stueckSize: 1 },
-      { nr: 20, name: "Burger BUN", cartonSize: 60, beutelSize: 48, stueckSize: 1 },
-      { nr: 39, name: "Long BUN", cartonSize: 48, beutelSize: 32, stueckSize: 1 },
-      { nr: 43, name: "Long Chicken Patty", cartonSize: 112, beutelSize: 14, stueckSize: 1 },
-      { nr: 50, name: "Whopper Patty", cartonSize: 132, beutelSize: 0, stueckSize: 1 },
-      { nr: 53, name: "Crispy Chicken Patty", cartonSize: 136, beutelSize: 17, stueckSize: 1 },
-      { nr: 55, name: "Burger Patty", cartonSize: 312, beutelSize: 0, stueckSize: 1 },
-      { nr: 56, name: "King Wings", cartonSize: 325, beutelSize: 65, stueckSize: 1 },
-      { nr: 57, name: "King Nuggets", cartonSize: 568, beutelSize: 71, stueckSize: 1 },
+<script>
+  // === FULL LIST (from your Tagesinventur sheet) ===
+  const ITEMS = [
+    { nr: 10,   name: "Whopper BUN",               karton: 20,   beutel: 30 },
+    { nr: 20,   name: "Burger BUN",                karton: 60,   beutel: 48 },
+    { nr: 39,   name: "Long BUN",                  karton: 48,   beutel: 32 },
+    { nr: 43,   name: "Long Chicken Patty",        karton: 112,  beutel: 14 },
+    { nr: 50,   name: "Whopper Patty",             karton: 132,  beutel: 50 },
+    { nr: 53,   name: "Crispy Chicken Patty",      karton: 136,  beutel: 17 },
+    { nr: 55,   name: "Burger Patty",              karton: 312,  beutel: 65 },
+    { nr: 56,   name: "King Wings",                karton: 325,  beutel: 65 },
+    { nr: 57,   name: "King Nuggets",              karton: 568,  beutel: 71 },
+    { nr: 60,   name: "Bacon",                     karton: 930,  beutel: 155, stueckSize: 52 },
+    { nr: 100,  name: "Pommes Frites",             karton: 12.5, beutel: 2.5 },
+    { nr: 107,  name: "Zwiebelringe",              karton: 630,  beutel: 63 },
+    { nr: 122,  name: "Hot Brownie",               karton: 18,   beutel: 0 },
+    { nr: 129,  name: "Hot Blondie",               karton: 18,   beutel: 0 },
+    { nr: 606,  name: "Chilli Cheese Nuggets",     karton: 450,  beutel: 50 },
 
-      // Special case on your list:
-      { nr: 60, name: "Bacon", cartonSize: 930, beutelSize: 155, stueckSize: 52 },
+    // kg items (keep both columns, as on sheet)
+    { nr: 910,  name: "Tomaten (kg)",              karton: 5,    beutel: 5 },
+    { nr: 912,  name: "Zwiebeln (kg)",             karton: 20,   beutel: 1.5 },
+    { nr: 916,  name: "Eisbergsalat (kg)",         karton: 6,    beutel: 1 },
 
-      { nr: 100, name: "Pommes Frites", cartonSize: 12.5, beutelSize: 2.5, stueckSize: 1 },
-      { nr: 107, name: "Zwiebelringe", cartonSize: 630, beutelSize: 63, stueckSize: 1 },
-      { nr: 122, name: "Hot Brownie", cartonSize: 18, beutelSize: 0, stueckSize: 1 },
-      { nr: 129, name: "Hot Blondie", cartonSize: 18, beutelSize: 0, stueckSize: 1 },
-      { nr: 606, name: "Chilli Cheese Nuggets", cartonSize: 450, beutelSize: 50, stueckSize: 1 },
+    { nr: 11577, name: "Mozzarella Sticks",        karton: 204,  beutel: 34 },
+    { nr: 11816, name: "Chicken Tender Strips",    karton: 216,  beutel: 27 },
+    { nr: 11866, name: "Gitterpommes",             karton: 10,   beutel: 2.5 },
+    { nr: 11869, name: "Tortilla Wrap",            karton: 144,  beutel: 18 },
+    { nr: 11900, name: "Potato Bun",               karton: 48,   beutel: 24 },
+    { nr: 11947, name: "PlantBased WH Patty",      karton: 100,  beutel: 0 },
+    { nr: 11973, name: "PlantBased Nuggets",       karton: 568,  beutel: 71 },
+    { nr: 12010, name: "PlantBased HB Patty",      karton: 200,  beutel: 0 },
+    { nr: 12029, name: "PlantBased Long Patty",    karton: 112,  beutel: 14 },
+    { nr: 12055, name: "Brioche BUN",              karton: 30,   beutel: 15 },
+    { nr: 12061, name: "Premium Crunchy Chicken",  karton: 96,   beutel: 12 },
+    { nr: 12110, name: "Mini Churros",             karton: 500,  beutel: 100 },
+    { nr: 12180, name: "Falafel Bites",            karton: 249,  beutel: 83 }
+  ];
 
-      { nr: 910, name: "Tomaten (kg)", cartonSize: 5, beutelSize: 0, stueckSize: 1 },
-      { nr: 912, name: "Zwiebeln (kg)", cartonSize: 20, beutelSize: 1.5, stueckSize: 1 },
-      { nr: 916, name: "Eisbergsalat (kg)", cartonSize: 6, beutelSize: 1, stueckSize: 1 },
+  const LS_KEY = "bk_rest_inventory_v1";
+  const state = loadState();
 
-      { nr: 11577, name: "Mozzarella Sticks", cartonSize: 204, beutelSize: 34, stueckSize: 1 },
-      { nr: 11816, name: "Chicken Tender Strips", cartonSize: 216, beutelSize: 27, stueckSize: 1 },
-      { nr: 11866, name: "Gitterpommes", cartonSize: 10, beutelSize: 2.5, stueckSize: 1 },
-      { nr: 11869, name: "Tortilla Wrap", cartonSize: 144, beutelSize: 18, stueckSize: 1 },
-      { nr: 11900, name: "Potato Bun", cartonSize: 48, beutelSize: 24, stueckSize: 1 },
-      { nr: 11947, name: "PlantBased WH Patty", cartonSize: 100, beutelSize: 0, stueckSize: 1 },
-      { nr: 11973, name: "PlantBased Nuggets", cartonSize: 568, beutelSize: 71, stueckSize: 1 },
-      { nr: 12010, name: "PlantBased HB Patty", cartonSize: 200, beutelSize: 0, stueckSize: 1 },
-      { nr: 12029, name: "PlantBased Long Patty", cartonSize: 112, beutelSize: 14, stueckSize: 1 },
-      { nr: 12055, name: "Brioche BUN", cartonSize: 30, beutelSize: 15, stueckSize: 1 },
-      { nr: 12061, name: "Premium Crunchy Chicken", cartonSize: 96, beutelSize: 12, stueckSize: 1 },
-      { nr: 12110, name: "Mini Churros", cartonSize: 500, beutelSize: 100, stueckSize: 1 },
-      { nr: 12180, name: "Falafel Bites", cartonSize: 249, beutelSize: 83, stueckSize: 1 },
-    ];
+  const tbody = document.getElementById("rows");
+  const search = document.getElementById("search");
+  const countEl = document.getElementById("count");
 
-    const tbody = document.getElementById("inventoryBody");
-
-    function num(v) {
-      const n = parseFloat(String(v).replace(",", "."));
-      return isNaN(n) ? 0 : n;
+  function loadState(){
+    try{
+      const raw = localStorage.getItem(LS_KEY);
+      return raw ? JSON.parse(raw) : {};
+    }catch(e){
+      return {};
     }
+  }
+  function saveState(){
+    localStorage.setItem(LS_KEY, JSON.stringify(state));
+  }
 
-    function fmt(n) {
-      // keep up to 3 decimals; remove trailing zeros
-      const s = (Math.round(n * 1000) / 1000).toFixed(3);
-      return s.replace(/\.?0+$/, "");
-    }
+  function n(v){
+    const x = Number(String(v).replace(",", "."));
+    return Number.isFinite(x) ? x : 0;
+  }
 
-    function render() {
-      tbody.innerHTML = "";
-      items.forEach((it, idx) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `
-          <td class="mono">${it.nr}</td>
-          <td>${it.name}</td>
+  function calcGesamt(item){
+    const s = state[item.nr] || {};
+    const kartonQty = n(s.kartonQty);
+    const beutelQty = n(s.beutelQty);
+    const stueck    = n(s.stueck);
 
-          <td class="mono">${it.cartonSize}</td>
-          <td><input inputmode="decimal" class="in" id="c_${idx}" value="0"></td>
+    const stueckSize = item.stueckSize ? n(item.stueckSize) : 1;
 
-          <td class="mono">${it.beutelSize}</td>
-          <td><input inputmode="decimal" class="in" id="b_${idx}" value="0"></td>
+    return (kartonQty * n(item.karton)) + (beutelQty * n(item.beutel)) + (stueck * stueckSize);
+  }
 
-          <td class="mono">${it.stueckSize}</td>
-          <td><input inputmode="decimal" class="in" id="s_${idx}" value="0"></td>
+  function render(filterText=""){
+    tbody.innerHTML = "";
+    const ft = filterText.trim().toLowerCase();
 
-          <td><span class="total mono" id="t_${idx}">0</span></td>
-        `;
-        tbody.appendChild(tr);
-      });
-
-      document.querySelectorAll("input.in").forEach(inp => inp.addEventListener("input", recalc));
-      recalc();
-    }
-
-    function recalc() {
-      items.forEach((it, idx) => {
-        const cq = num(document.getElementById(`c_${idx}`).value);
-        const bq = num(document.getElementById(`b_${idx}`).value);
-        const sq = num(document.getElementById(`s_${idx}`).value);
-
-        const total = (cq * it.cartonSize) + (bq * it.beutelSize) + (sq * it.stueckSize);
-        document.getElementById(`t_${idx}`).textContent = fmt(total);
-      });
-    }
-
-    document.getElementById("btnReset").addEventListener("click", () => {
-      document.querySelectorAll("input.in").forEach(i => i.value = "0");
-      recalc();
+    const filtered = ITEMS.filter(it => {
+      if(!ft) return true;
+      return (String(it.nr).includes(ft) || it.name.toLowerCase().includes(ft));
     });
 
-    document.getElementById("btnFillDemo").addEventListener("click", () => {
-      // Just to test quickly
-      const demo = {
-        "Whopper BUN": { c: 18, b: 7, s: 0 },
-        "Burger BUN": { c: 3, b: 4.5, s: 0 },
-        "Long BUN": { c: 2, b: 1, s: 0 },
-        "Bacon": { c: 1, b: 2, s: 1 },
-        "Zwiebeln (kg)": { c: 0, b: 3, s: 0 }
-      };
-      items.forEach((it, idx) => {
-        if (demo[it.name]) {
-          document.getElementById(`c_${idx}`).value = demo[it.name].c;
-          document.getElementById(`b_${idx}`).value = demo[it.name].b;
-          document.getElementById(`s_${idx}`).value = demo[it.name].s;
-        }
-      });
-      recalc();
-    });
+    countEl.textContent = `${filtered.length} / ${ITEMS.length} items`;
 
-    render();
-  </script>
+    for(const item of filtered){
+      if(!state[item.nr]) state[item.nr] = { kartonQty: 0, beutelQty: 0, stueck: 0 };
+
+      const tr = document.createElement("tr");
+
+      tr.innerHTML = `
+        <td class="nr">${item.nr}</td>
+        <td>${item.name}</td>
+        <td class="right sizes">${item.karton}</td>
+        <td class="right qty"><input inputmode="decimal" data-nr="${item.nr}" data-field="kartonQty" value="${state[item.nr].kartonQty ?? 0}"></td>
+        <td class="right sizes">${item.beutel || 0}</td>
+        <td class="right qty"><input inputmode="decimal" data-nr="${item.nr}" data-field="beutelQty" value="${state[item.nr].beutelQty ?? 0}"></td>
+        <td class="right qty"><input inputmode="decimal" data-nr="${item.nr}" data-field="stueck" value="${state[item.nr].stueck ?? 0}"></td>
+        <td class="gesamt" id="g-${item.nr}">${format(calcGesamt(item))}</td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    tbody.querySelectorAll("input").forEach(inp => {
+      inp.addEventListener("input", (e) => {
+        const nr = Number(e.target.dataset.nr);
+        const field = e.target.dataset.field;
+        state[nr][field] = e.target.value; // store raw (supports commas)
+        saveState();
+
+        const item = ITEMS.find(x => x.nr === nr);
+        const g = document.getElementById(`g-${nr}`);
+        if(item && g) g.textContent = format(calcGesamt(item));
+      });
+    });
+  }
+
+  function format(x){
+    // show integers without decimals; decimals kept for 12.5 / 2.5 etc.
+    const isInt = Math.abs(x - Math.round(x)) < 1e-9;
+    return isInt ? String(Math.round(x)) : String(Math.round(x * 100) / 100);
+  }
+
+  document.getElementById("clear").addEventListener("click", () => {
+    localStorage.removeItem(LS_KEY);
+    for(const k of Object.keys(state)) delete state[k];
+    render(search.value);
+  });
+
+  document.getElementById("reset").addEventListener("click", () => {
+    for(const it of ITEMS){
+      state[it.nr] = { kartonQty: 0, beutelQty: 0, stueck: 0 };
+    }
+    saveState();
+    render(search.value);
+  });
+
+  search.addEventListener("input", () => render(search.value));
+
+  render();
+</script>
 </body>
 </html>
